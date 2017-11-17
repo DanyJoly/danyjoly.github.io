@@ -1,1 +1,0 @@
-# danyjoly.github.io
