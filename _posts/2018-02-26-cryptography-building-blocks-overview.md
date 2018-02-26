@@ -3,15 +3,17 @@ layout: post
 title: Cryptography Building Blocks Overview
 ---
 
-Over the past few months, I got into situations where a better understanding of cryptography would have saved me some time. This post hopes to be a nice overview useful to evaluate cryptography solutions.
+Over the past few months, I got into situations where a better understanding of cryptography would have saved me some time.
 
 Simple things like *what's the best way to store a user's password?*, or *how can I encrypt content in my app for safe storage?*
 
 Of course, the best advice with cryptography security is to use solution that someone else was paid a lot of money to create. Cryptography is one of those fields where even a solution that has been crafted by world-class experts, standardized, then used successfully for many years, can be vulnerable and broken [15 years later by a clever hacker](https://blog.cloudflare.com/padding-oracles-and-the-decline-of-cbc-mode-ciphersuites/).
 
-Still, understanding how some of those solutions work is fun. It also helps to understand how they work so that you can assess if they provide the protection you need. Is encryption sufficient for example or do you also need your data to be tamper proof?
+Still, understanding how some of those solutions work is fun. It also helps to understand how they work so that you can assess if they provide the protection you need. For example, is encryption sufficient, or do you also need your data to be tamper proof?
 
-In this post I'll start by covering certain basic building blocks used to create secure protocols and software. In later posts, I'd like to cover how they can be used together to create secure software.
+In this post, I'll only cover certain basic building blocks used to create secure protocols and software. It's already a longish read so I'll wait for later posts to cover how they can be used together to create secure software solutions.
+
+Here we go!
 
 # Hashing
 At its core, a hash function is simply an algorithm that takes a data input of arbitrary length and output a value of fixed length. The output is called the hash or the digest.
