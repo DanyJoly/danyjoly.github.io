@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Slice Fractions 2 has shipped!
+comments: true
 ---
 
 [![Slice Fractions 2 banner](/assets/sf2.png)](https://youtu.be/3Q3wHtKb9p8)

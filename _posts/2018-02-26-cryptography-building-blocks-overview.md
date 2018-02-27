@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Cryptography Building Blocks Overview
+comments: true
 ---
 
 Over the past few months, I got into situations where a better understanding of cryptography would have saved me some time.

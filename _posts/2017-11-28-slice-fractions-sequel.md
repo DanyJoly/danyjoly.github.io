@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Finding happiness by shipping a Slice Fractions Sequel
+comments: true
 ---
 
 So last post I mentioned that after putting Secret Powers: Animals on hold, we managed to turn things around at Ululab.

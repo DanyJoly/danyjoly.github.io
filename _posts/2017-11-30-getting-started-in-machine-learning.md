@@ -1,11 +1,12 @@
 ---
 layout: post
 title: Getting started in machine learning
+comments: true
 ---
 
 It's only relatively recently that I learned that machine learning was becoming such an exciting and important field and that I was late to the game! The first thing that made me tick was when I learned that Google had open sourced [TensorFlow](https://www.tensorflow.org/). It wasn't the first open source ML library, but somehow that's when I realized that the field was ripe for growth and not just for a few niches to sell ads or improve movie recommendations.
 
-I made this post to be able to refer it to friends who, like me, want to enter the field and who don't know where to start. It's only one data point, so I would still recommend doing additional research to find what works best for one's situation and natural inclinations. Some people learn better when they have a concrete project right from the start for example, so they'll learn just what they need to solve that problem. There is a speed VS depth tradeoff, but ultimately, whatever keeps one motivated and excited the best is often a good starting point. 
+I made this post to be able to refer it to friends who, like me, want to enter the field and who don't know where to start. It's only one data point, so I would still recommend doing additional research to find what works best for one's situation and natural inclinations. Some people learn better when they have a concrete project right from the start for example, so they'll learn just what they need to solve that problem. There is a speed VS depth tradeoff, but ultimately, whatever keeps one motivated and excited the best is often a good starting point.
 
 # Where to Start
 
