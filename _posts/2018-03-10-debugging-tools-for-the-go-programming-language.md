@@ -219,6 +219,6 @@ I won't cover it over here since I found it to be already well explained in this
 
 Other references I found interesting:
 
-Go Functions In Assembly: [](https://github.com/golang/go/files/447163/GoFunctionsInAssembly.pdf)
+Go Functions In Assembly: <https://github.com/golang/go/files/447163/GoFunctionsInAssembly.pdf>
 
-Profiling Go Programs: [](https://blog.golang.org/profiling-go-programs)
+Profiling Go Programs: <https://blog.golang.org/profiling-go-programs>
