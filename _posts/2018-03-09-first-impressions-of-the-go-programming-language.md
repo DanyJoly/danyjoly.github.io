@@ -103,7 +103,7 @@ There are many other things to like about go like its simple concurrency model (
 
 A lot of people seem to be concerned by the absence of exceptions in Go. While unusual, I don't think it's that big of a deal and for very large project, we know it scales.
 
-In my old team, we used C++ without exception. One of the reasons being because much of the Windows codebase is C-based and C code isn't exception safe. Exceptions would have led to leaked resources and all kind of similar badness.
+During my days in the Internet Explorer team, we used C++ without exception. Mainly because much of the Internet Explorer codebase uses COM objects, which don't handle C++ exceptions. The Windows codebase and APIs are mostly C-based, and C code isn't exception safe either. Exceptions would have easily led to leaked resources and instabilities unless major architectural changes and great care were invested first (at little benefits to the end users).
 
 Depending on which team you were on, we had two patterns for error management that didn't rely on exceptions.
 
@@ -228,11 +228,11 @@ func nilInterfaces() {
 
 ```
 
-For someone coming from another language, this is completely counter-intuitive. From what I read, it's the inevitable consequence of a series of choices made by the language designer. There are best practices to make this less of an issue (assign nil directly to the interface and don't return nil from a function as an error. Use an error object instead).
+For someone coming from another language, this is completely counter-intuitive. From what I read, it's the inevitable consequence of a series of choices made by the language designer. There are best practices to make this less of an issue (assign nil directly to the interface and don't return nil from a function as an error as they are often valid object values. Use an object implementing the error interface instead).
 
 I'll see if that indeed becomes much of a hurdle or if it's relatively contained in real life.
 
-No generics is also a big deal to me. Even the containers package has to rely on typecasting, and like many, I don't understand the reasons for the tradeoff.
+No generics is also a big deal to me. Even the official containers package has to rely on typecasting, and like many, I don't understand the reasons for the tradeoff.
 
 The language designers are aware of the previous issues, so I hope that future versions of Go will bring better solutions.
 
