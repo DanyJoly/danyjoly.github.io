@@ -213,10 +213,12 @@ So there you go. Like it so often happens, hard bugs are when your mental model 
 
 # Reflection and Memory Layout
 
-Something I found interesting in Go is the ability to explore the memory layout of structs. This information is context dependent. I assume it can change from architecture to architecture and from one Go version to the other, but it's interesting Nonetheless.
+Something I found interesting in Go is the ability to explore the memory layout of structs. This information is context dependent. I assume it can change from architecture to architecture and from one Go version to the other, but it's interesting nonetheless.
 
 I won't cover it over here since I found it to be already well explained in this [article](https://syslog.ravelin.com/go-and-memory-layout-6ef30c730d51) by Phil Pearl.
 
 Other references I found interesting:
-Go Functions In Assembly: https://github.com/golang/go/files/447163/GoFunctionsInAssembly.pdf
-Profiling Go Programs: https://blog.golang.org/profiling-go-programs
+
+Go Functions In Assembly: [](https://github.com/golang/go/files/447163/GoFunctionsInAssembly.pdf)
+
+Profiling Go Programs: [](https://blog.golang.org/profiling-go-programs)
