@@ -7,7 +7,7 @@ comments: true
 About a month ago I wrote a post about cryptography tools. In this article, I use some of these tools to create a convenient data encryption protocol for small files.
 
 # Security Disclaimer
-Unless you're an expert (I'm not), using existing software that stood the test of time such as [VeraCrypt](https://www.veracrypt.fr/) or [OpenPGP](https://www.openpgp.org/) is better than rolling your own solution. Even gluing existing and proven cryptography libraries require non-trivial expertise. The code provided here is to learn about cryptography, but unless multiple world-class experts give me their thumb up (could take a while), don't rely on it being flawless.
+Unless you're an expert (I'm not), using existing software that stood the test of time such as [VeraCrypt](https://www.veracrypt.fr/), [OpenPGP](https://www.openpgp.org/) or SSH is better than rolling your own solution. Even gluing existing and proven cryptography libraries requires non-trivial expertise. The goal of the code provided here is to learn about cryptography, but unless multiple world-class experts gave me their thumb up (and that could take a while), I wouldn't rely on it being flawless.
 
 # Requirements
 I had a couple of ideas in mind that require strong file encryption. One of them is a simple [command line tool](https://github.com/DanyJoly/go-filecrypt) to encrypt files.
@@ -26,23 +26,21 @@ The typical solution for the encryption of a large quantity of data is with a sy
 Just like VeraCrypt and BitLocker (Microsoft), I decided to use AES-256 in XTS mode.  It's a modern block cipher developed for disk encryption. Other more traditional modes like CBC encryption would have been fine too, but XTS is a bit [less malleable](https://crypto.stackexchange.com/questions/5587/what-is-the-advantage-of-xts-over-cbc-mode-with-diffuser/5593) (tamper-resistant).
 
 Unfortunately, while AES provides fast content encryption, it's not a complete solution. Two problems remain:
-* AES keys are not the same thing as a password. AES keys are fixed-length, long (I use 256 bits), and unlike user passwords, they must have excellent entropy. We can't rely on the user to provide a password that respects these requirements.
+* AES keys are not the same thing as a password. AES keys are fixed-length, long (256 bits for AES-256), and unlike user passwords, they must have excellent entropy. We can't rely on the user to provide a password that respects these requirements so we must convert the user password to an AES-key.
 * As mentioned previously, XTS is *less* malleable, not impervious to it. We need something to protect ourselves against data tampering.
 
-## Password to AES key
+## Converting the password to an AES key
 To create fixed-length AES keys with excellent entropy, we rely on password hash functions. They have been developed precisely for that purpose. By being voluntarily expensive to compute, brute force attempt to get to the AES key is infeasible. They are also designed to spread the entropy to the full length of the key.
 
 ## Protection Against Data Tampering
 
-As mentioned in my [previous post](http://localhost:4000/2018/02/26/cryptography-building-blocks-overview.html), the most common way to detect data tampering is to calculate a cryptographic hash of the content. Obviously, you then need to keep the hash securely around until the content is decrypted and compare the hash of the decrypted data to the original hash. This is called a message authentication code (MAC).
+As mentioned in my [previous post](http://localhost:4000/2018/02/26/cryptography-building-blocks-overview.html), a common way to detect data tampering is to calculate a cryptographic hash of the content. Obviously, you then need to keep the hash securely around until the content is decrypted and compare the hash of the decrypted data to the original hash. A cryptographic hash used for that manner is often called a message authentication code (MAC).
 
 # The Implementation
 
-Our first step is to generate an AES key from the user-provided password.
+To generate an AES key from the user-provided password, I decided to use the Argon2 password hash function. It's a new generation PHF that improves resilience against GPU-based brute force attacks by requiring a large amount of memory to compute the hash; something for which GPUs are not optimized.
 
-For this solution, I decided to use the Argon2, a new generation password hash function with the goal of adding additional protection against the latest GPU-based brute force attacks. Argon2 does this by also requiring a large amount of memory to compute the hash, something for which GPUs are not optimized.
-
-Because Argon2 was released very recently (2015), and the jury is still out on its long-term robustness, I didn't feel safe relying solely on it. For that reason, I'm also applying a PBKDF2 password hash function serially with Argon2, using the same settings as VeraCrypt, which are already much more stringent than what the NIST recommended as of June 2017.
+Because Argon2 was released very recently (2015), and the jury is still out on its long-term robustness, I didn't feel safe relying solely on it. For that reason, I'm also applying a PBKDF2 password hash function serially with Argon2. I use the same settings as VeraCrypt, which are already much more stringent than what the NIST recommended as of June 2017 so I expect both of those password hash to stand on their own. The cost is that even on a decent PC, it takes 1+ second to compute the hash.
 
 The first step is to generate a salt for the password hash function:  
 ```go
@@ -158,15 +156,17 @@ To see the full implementation, go check out the [go-encrypt](https://github.com
 You can also see how I use it to do simple file encryption with the [go-filecrypt](https://github.com/DanyJoly/go-filecrypt) project.
 
 # Limitations
-## Not suitable for stream encryption
+## (Feature) Not suitable for stream encryption
 The protocol format puts the padding at the start of the encrypted content. That is impractical for stream encryption as you don't necessarily know the content length of a data stream in advance. If you do know the full size of the data though, appending the padding leads to a simpler implementation for both encryption and decryption.
 
 If you need stream encryption, you could put the digest, the padding and its length at the end of the encrypted content. There are a few implementation bugs to be careful about when you'll read the data back though, assuming that you'll also support reading from a stream.
 
-## MAC-then-encrypt or encrypt-then-MAC?
-Just like VeraCrypt/TrueCrypt, I pack the digest along with the content. AES in XTS mode still being tamperable, it's possible in theory to tamper the data so that both the digest and the content match. From what I understand, this is not something likely, but if you have a way to hash the encrypted content and then keep the digest elsewhere securely, it's a better solution. It seemed rather impractical in the case of an encrypted file to pass along though so I don't think this would apply to this problem. I'm also assuming that if a better option existed, VeraCrypt/TrueCrypt would have done so already.
+## (Security) Not suitable as a communication protocol
+Just like VeraCrypt/TrueCrypt, I make a digest on the plaintext and then I encrypt it along with the plaintext. While this is fine for file or disk encryption and such, it's unsafe for client-server communication. If you need secure communication, use [ssh](https://en.wikipedia.org/wiki/Secure_Shell).
 
-See a conversation about this point of contention [here](https://crypto.stackexchange.com/questions/202/should-we-mac-then-encrypt-or-encrypt-then-mac).
+Designing a secure client-server communication protocol is quite a bit more difficult. Hackers have found plenty of clever tricks to make a server reveal information about the plaintext. A server *has* the correct AES-key / password and therefore it can reveal information about the plaintext through clever queries from a hacker, which can then be used to break the encryption.
+
+Examples of such types of attacks [here](https://en.wikipedia.org/wiki/Padding_oracle_attack),  [here](https://moxie.org/blog/the-cryptographic-doom-principle/) and [here](https://crypto.stackexchange.com/questions/202/should-we-mac-then-encrypt-or-encrypt-then-mac).
 
 # References
 
